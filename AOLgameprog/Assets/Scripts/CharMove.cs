@@ -9,31 +9,28 @@ public class CharMovement : MonoBehaviour
     public CameraSwitch camSwitch;
 
     Vector2 movement;
+    Vector2 lastMoveDir = Vector2.down;
 
     void Update()
     {
-        if (!isHurt)
+        movement.x = Input.GetAxisRaw("Horizontal");
+        movement.y = Input.GetAxisRaw("Vertical");
+
+        Vector2 input = movement.normalized;
+
+        animator.SetFloat("Speed", input.sqrMagnitude);
+
+        if (input != Vector2.zero)
         {
-            movement.x = Input.GetAxisRaw("Horizontal");
-            movement.y = Input.GetAxisRaw("Vertical");
-
-            Vector2 input = movement.normalized;
-
-            animator.SetFloat("Speed", input.sqrMagnitude);
-
-            if (input != Vector2.zero)
-            {
-                lastMoveDir = input;
-                animator.SetFloat("MoveX", input.x);
-                animator.SetFloat("MoveY", input.y);
-            }
+            lastMoveDir = input;
+            animator.SetFloat("MoveX", input.x);
+            animator.SetFloat("MoveY", input.y);
         }
     }
 
     void FixedUpdate()
     {
-        if (!isHurt)
-            rb.MovePosition(rb.position + movement.normalized * moveSpeed * Time.fixedDeltaTime);
+        rb.MovePosition(rb.position + movement.normalized * moveSpeed * Time.fixedDeltaTime);
     }
 
     void OnTriggerEnter2D(Collider2D other)
